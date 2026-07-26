@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lull — Sleep, sorted.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#14162B; --ink2:#20233F; --twilight:#4C4C7A;
+  --dusk-lilac:#C0A3CC; --dusk-blue:#7B7BB0;
+  --bone:#F1ECE2; --bone2:#E6DECF; --oat:#D8CEBB;
+  --moon:#CBC8E6; --text:#2B2A33; --text-soft:#726E7B; --line:#DED6C7;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Hanken Grotesk',sans-serif;color:var(--text);background:var(--bone);line-height:1.55;-webkit-font-smoothing:antialiased;}
+h1,h2,h3{font-family:'Fraunces',serif;font-weight:400;line-height:1.05;letter-spacing:-.015em;}
+.eyebrow{font-family:'Hanken Grotesk',sans-serif;font-size:11.5px;letter-spacing:.32em;text-transform:uppercase;font-weight:600;}
+a{color:inherit;text-decoration:none;}
+img{max-width:100%;display:block;}
+
+/* ---- IMAGE SLOT SYSTEM ----
+   Drop a file with the named filename into the SAME folder as this HTML
+   and it appears automatically. Until then you see a labeled placeholder. */
+.imgslot{position:relative;overflow:hidden;background:linear-gradient(135deg,#E7DFD0,#EFE9DE);
+  border:1px dashed var(--dusk-lilac);display:flex;align-items:center;justify-content:center;}
+.imgslot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;}
+.imgslot .lbl{position:relative;z-index:1;text-align:center;color:#9088a0;font-size:12px;padding:18px;line-height:1.5;}
+.imgslot .lbl b{display:block;font-family:'Fraunces';font-size:14px;color:#5a5470;margin-top:5px;letter-spacing:.02em;}
+.imgslot .lbl span{display:inline-block;margin-top:8px;background:var(--ink);color:var(--moon);font-size:11px;
+  padding:4px 10px;border-radius:100px;letter-spacing:.06em;}
+
+/* announcement */
+.announce{background:var(--ink);color:var(--moon);text-align:center;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;padding:10px 16px;font-weight:500;}
+.announce span{opacity:.55;padding:0 10px;}
+
+/* nav */
+nav{display:flex;align-items:center;justify-content:space-between;padding:20px 32px;position:sticky;top:0;z-index:40;background:rgba(241,236,226,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+.brand{font-family:'Fraunces',serif;font-size:26px;letter-spacing:-.02em;font-weight:500;}
+.brand .dot{color:var(--dusk-lilac);}
+.nav-links{display:flex;gap:30px;font-size:14.5px;font-weight:500;color:var(--text-soft);}
+.nav-links a:hover{color:var(--text);}
+.nav-right{display:flex;gap:20px;align-items:center;font-size:14.5px;font-weight:600;}
+.bag{background:var(--ink);color:var(--bone);padding:9px 20px;border-radius:100px;font-size:13.5px;}
+@media(max-width:760px){.nav-links{display:none;}nav{padding:16px 20px;}}
+
+/* HERO split */
+.hero{background:linear-gradient(160deg,var(--bone) 0%,#EAD9C8 40%,#C9B0C8 78%,var(--twilight) 100%);
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center;padding:56px 40px 60px;}
+@media(max-width:860px){.hero{grid-template-columns:1fr;padding:44px 22px;}}
+.hero-copy .eyebrow{color:var(--ink2);opacity:.7;}
+.hero-copy h1{font-size:clamp(40px,6.4vw,70px);margin:16px 0 0;color:var(--ink);font-weight:300;}
+.hero-copy h1 em{font-style:italic;color:#3B3B63;}
+.hero-copy .sub{max-width:440px;margin:20px 0 0;font-size:18px;color:#33334f;}
+.hero-cta{margin-top:30px;display:flex;gap:14px;flex-wrap:wrap;}
+.btn{background:var(--ink);color:var(--bone);padding:16px 32px;border-radius:100px;font-weight:600;font-size:15px;border:1px solid var(--ink);transition:transform .2s;cursor:pointer;display:inline-block;}
+.btn:hover{transform:translateY(-2px);}
+.btn.ghost{background:transparent;color:var(--ink);border-color:rgba(20,22,43,.35);}
+.hero-price{margin-top:14px;font-size:14px;color:#33334f;font-weight:500;}
+.hero-price s{opacity:.5;margin-left:6px;}
+.hero-img{aspect-ratio:1/1;border-radius:20px;box-shadow:0 40px 80px -34px rgba(20,22,43,.55);}
+
+/* trust */
+.trust{background:var(--ink);color:var(--moon);display:flex;justify-content:center;gap:44px;flex-wrap:wrap;padding:22px 24px;font-size:13px;letter-spacing:.04em;font-weight:500;}
+.trust span{display:flex;align-items:center;gap:9px;opacity:.85;}
+.trust svg{width:16px;height:16px;stroke:var(--dusk-lilac);}
+
+/* sections */
+section.pad{padding:84px 24px;}
+.wrap{max-width:1060px;margin:0 auto;}
+.center{text-align:center;}
+.sec-eyebrow{color:var(--dusk-blue);}
+h2.big{font-size:clamp(30px,5.4vw,50px);font-weight:300;margin:14px 0 0;}
+h2.big em{font-style:italic;}
+.lead{max-width:560px;margin:18px auto 0;color:var(--text-soft);font-size:17px;}
+
+/* collection grid */
+.collection{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:52px;}
+@media(max-width:900px){.collection{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:520px){.collection{grid-template-columns:1fr;}}
+.pcard{background:var(--bone);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column;text-align:left;}
+.pcard:hover{transform:translateY(-4px);box-shadow:0 24px 40px -26px rgba(20,22,43,.4);}
+.pcard .shot{aspect-ratio:1/1;}
+.pcard .info{padding:18px 18px 22px;display:flex;flex-direction:column;flex:1;}
+.pcard h3{font-size:19px;font-weight:400;margin-bottom:8px;}
+.pcard .rate{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--text-soft);margin-bottom:12px;}
+.pcard .rate .st{color:var(--dusk-blue);letter-spacing:1px;}
+.pcard .prow{margin-top:auto;display:flex;align-items:baseline;gap:9px;}
+.pcard .now{font-family:'Fraunces';font-size:22px;}
+.pcard .was{font-size:14px;color:var(--text-soft);text-decoration:line-through;}
+.pcard .add{margin-top:14px;background:transparent;color:var(--ink);border:1px solid rgba(20,22,43,.3);border-radius:100px;padding:11px 0;text-align:center;font-weight:600;font-size:14px;transition:background .2s,color .2s;cursor:pointer;}
+.pcard .add:hover{background:var(--ink);color:var(--bone);}
+
+/* product feature rows */
+.prod{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;max-width:1060px;margin:0 auto;padding:70px 24px;border-top:1px solid var(--line);}
+.prod.flip .prod-media{order:2;}
+@media(max-width:820px){.prod{grid-template-columns:1fr;gap:26px;padding:52px 22px;}.prod.flip .prod-media{order:0;}}
+.prod-media{aspect-ratio:4/5;border-radius:20px;}
+.prod-copy .eyebrow{color:var(--dusk-blue);}
+.prod-copy h3{font-size:clamp(28px,4.4vw,40px);font-weight:300;margin:12px 0 4px;}
+.prod-copy .tag{font-family:'Fraunces';font-style:italic;font-size:19px;color:var(--twilight);margin-bottom:18px;}
+.prod-copy ul{list-style:none;margin:0 0 22px;display:flex;flex-direction:column;gap:11px;}
+.prod-copy li{font-size:15.5px;display:flex;gap:11px;align-items:flex-start;}
+.prod-copy li svg{width:17px;height:17px;flex-shrink:0;margin-top:3px;stroke:var(--dusk-blue);}
+.prod-copy .desc{color:var(--text-soft);font-size:15.5px;margin-bottom:22px;max-width:480px;}
+.prod-copy .buy{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.prod-copy .price{font-family:'Fraunces';font-size:30px;}
+.prod-copy .price s{font-size:16px;color:var(--text-soft);margin-left:8px;}
+.safety{font-size:13px;color:var(--text-soft);background:var(--bone2);border-left:3px solid var(--dusk-lilac);padding:12px 16px;margin-top:18px;border-radius:0 8px 8px 0;max-width:480px;}
+
+/* tiers */
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:54px;align-items:end;}
+@media(max-width:820px){.tiers{grid-template-columns:1fr;}}
+.tier{background:var(--bone);border:1px solid var(--line);border-radius:20px;padding:32px 28px;display:flex;flex-direction:column;}
+.tier.feature{background:linear-gradient(165deg,var(--ink2),var(--ink));color:var(--bone);border:none;padding:44px 28px;box-shadow:0 30px 60px -28px rgba(20,22,43,.55);}
+.tier .badge{align-self:flex-start;font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;background:var(--dusk-lilac);color:var(--ink);padding:5px 12px;border-radius:100px;margin-bottom:16px;}
+.tier h3{font-size:26px;font-weight:400;margin-bottom:4px;}
+.tier .desc{font-size:14px;color:var(--text-soft);margin-bottom:20px;}
+.tier.feature .desc{color:var(--moon);}
+.tier .price{font-family:'Fraunces';font-size:40px;line-height:1;}
+.tier .price small{font-size:15px;color:var(--text-soft);font-family:'Hanken Grotesk';}
+.tier.feature .price small{color:var(--moon);}
+.tier .was{font-size:14px;color:var(--text-soft);text-decoration:line-through;margin-top:4px;}
+.tier ul{list-style:none;margin:20px 0 26px;display:flex;flex-direction:column;gap:10px;}
+.tier li{font-size:14.5px;display:flex;gap:10px;align-items:flex-start;}
+.tier li svg{width:16px;height:16px;flex-shrink:0;margin-top:3px;stroke:var(--dusk-blue);}
+.tier.feature li svg{stroke:var(--dusk-lilac);}
+.tier .btn{margin-top:auto;text-align:center;}
+.tier:not(.feature) .btn{background:transparent;color:var(--ink);border-color:rgba(20,22,43,.3);}
+
+/* refill */
+.refill{background:var(--ink);color:var(--bone);border-radius:26px;max-width:1060px;margin:0 auto;padding:56px 44px;display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:center;}
+@media(max-width:820px){.refill{grid-template-columns:1fr;padding:40px 28px;text-align:center;}}
+.refill h2{font-size:clamp(28px,4.4vw,40px);font-weight:300;}
+.refill h2 em{font-style:italic;color:var(--dusk-lilac);}
+.refill p{color:var(--moon);margin-top:16px;font-size:16px;max-width:440px;}
+@media(max-width:820px){.refill p{margin-left:auto;margin-right:auto;}}
+.refill .rbox{background:var(--ink2);border:1px solid #363861;border-radius:18px;padding:26px;}
+.refill .rbox .rp{font-family:'Fraunces';font-size:34px;}
+.refill .rbox .rp small{font-size:14px;font-family:'Hanken Grotesk';color:var(--moon);}
+.refill .rbox .save{color:var(--dusk-lilac);font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin:6px 0 18px;}
+.refill .rbox .btn{background:var(--bone);color:var(--ink);border-color:var(--bone);width:100%;text-align:center;}
+
+/* reviews */
+.reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:52px;}
+@media(max-width:820px){.reviews{grid-template-columns:1fr;}}
+.rev{background:var(--bone);border:1px solid var(--line);border-radius:16px;padding:26px;}
+.stars-row{color:var(--dusk-blue);font-size:15px;letter-spacing:2px;margin-bottom:12px;}
+.rev p{font-size:15px;}
+.rev .who{margin-top:16px;font-size:13px;color:var(--text-soft);font-weight:600;}
+
+/* faq */
+.faq{max-width:760px;margin:52px auto 0;}
+details{border-bottom:1px solid var(--line);padding:20px 4px;}
+summary{font-family:'Fraunces',serif;font-size:19px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;}
+summary::-webkit-details-marker{display:none;}
+summary::after{content:"+";font-family:'Hanken Grotesk';font-size:24px;color:var(--dusk-blue);font-weight:300;}
+details[open] summary::after{content:"–";}
+details p{color:var(--text-soft);font-size:15px;margin-top:12px;max-width:640px;}
+
+/* footer */
+footer{background:var(--ink);color:var(--moon);padding:60px 32px 34px;}
+.foot-top{max-width:1060px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:34px;}
+.foot-brand{font-family:'Fraunces';font-size:30px;color:var(--bone);}
+.foot-brand .dot{color:var(--dusk-lilac);}
+.foot-brand p{font-family:'Hanken Grotesk';font-size:14px;color:#8E8BB2;margin-top:10px;max-width:260px;}
+.foot-col h5{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#8E8BB2;margin-bottom:14px;font-weight:700;}
+.foot-col a{display:block;font-size:14.5px;margin-bottom:9px;color:var(--moon);opacity:.85;}
+.foot-bottom{max-width:1060px;margin:44px auto 0;padding-top:22px;border-top:1px solid #2C2E4E;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:12.5px;color:#7C79A0;}
+.disclaimer{background:var(--bone2);color:var(--text-soft);font-size:12.5px;text-align:center;padding:16px 24px;line-height:1.5;}
+</style>
+</head>
+<body>
+
+<div class="announce">Free shipping over 700 EGP <span>•</span> Cash on delivery <span>•</span> Cairo · Giza · Alexandria</div>
+
+<nav>
+  <div class="nav-links">
+    <a href="#shop">Shop</a>
+    <a href="#ritual">The Ritual</a>
+    <a href="#refill">Refills</a>
+  </div>
+  <div class="brand">Lull<span class="dot">.</span></div>
+  <div class="nav-right"><a href="#">Account</a><a href="#tiers" class="bag">Bag</a></div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-copy">
+    <div class="eyebrow">Egypt's first sleep kit</div>
+    <h1>The end of your day,<br><em>redesigned.</em></h1>
+    <p class="sub">Three small things that quiet the noise, open your breath, and let you drift. One box. One ritual.</p>
+    <div class="hero-cta">
+      <a href="#tiers" class="btn">Shop the Kit — 349 EGP</a>
+      <a href="#ritual" class="btn ghost">How it works</a>
+    </div>
+    <div class="hero-price">Bundle price <s>499 EGP</s></div>
+  </div>
+  <div class="imgslot hero-img">
+    <img src="bundle-open.png" alt="The Lull Kit — open box" onerror="this.style.display='none'">
+    <div class="lbl">HOMEPAGE HERO<b>bundle-open.jpg</b><span>open kit box — contents visible</span></div>
+  </div>
+</header>
+
+<!-- TRUST -->
+<div class="trust">
+  <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Cash on delivery</span>
+  <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.2-8.5"/><path d="M21 4v5h-5"/></svg> Free returns in Cairo</span>
+  <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg> WhatsApp support</span>
+  <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Made for Egyptian nights</span>
+</div>
+
+<!-- COLLECTION -->
+<section class="pad" id="shop">
+  <div class="wrap center">
+    <div class="eyebrow sec-eyebrow">The collection</div>
+    <h2 class="big">Four ways to a <em>better night.</em></h2>
+    <p class="lead">Every piece works alone. Together, they're the ritual. Prices in EGP — cash on delivery.</p>
+    <div class="collection">
+
+      <div class="pcard">
+        <div class="imgslot shot"><img src="bundle-closed.png" alt="The Kit" onerror="this.style.display='none'"><div class="lbl"><b>bundle-closed.jpg</b><span>closed kit box</span></div></div>
+        <div class="info"><h3>The Kit</h3><div class="rate"><span class="st">★★★★★</span> New</div><div class="prow"><span class="now">349 EGP</span><span class="was">499</span></div><div class="add">Add to bag</div></div>
+      </div>
+
+      <div class="pcard">
+        <div class="imgslot shot"><img src="mask-box.png" alt="Contour Mask" onerror="this.style.display='none'"><div class="lbl"><b>mask-box.jpg</b><span>contour mask box</span></div></div>
+        <div class="info"><h3>The Mask</h3><div class="rate"><span class="st">★★★★★</span> New</div><div class="prow"><span class="now">199 EGP</span><span class="was">299</span></div><div class="add">Add to bag</div></div>
+      </div>
+
+      <div class="pcard">
+        <div class="imgslot shot"><img src="strips-box.jpg" alt="Breathe Strips" onerror="this.style.display='none'"><div class="lbl"><b>strips-box.jpg</b><span>breathe strips box</span></div></div>
+        <div class="info"><h3>Breathe Strips</h3><div class="rate"><span class="st">★★★★★</span> New</div><div class="prow"><span class="now">199 EGP</span><span class="was">299</span></div><div class="add">Add to bag</div></div>
+      </div>
+
+      <div class="pcard">
+        <div class="imgslot shot"><img src="tape-box.jpg" alt="Night Tape" onerror="this.style.display='none'"><div class="lbl"><b>tape-box.jpg</b><span>night tape box</span></div></div>
+        <div class="info"><h3>Night Tape</h3><div class="rate"><span class="st">★★★★★</span> New</div><div class="prow"><span class="now">159 EGP</span><span class="was">249</span></div><div class="add">Add to bag</div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- RITUAL -->
+<section class="pad" id="ritual" style="background:var(--bone2);">
+  <div class="prod" style="border:none;padding-top:0;padding-bottom:0;">
+    <div class="imgslot prod-media"><img src="mask-lifestyle.png" alt="Lull ritual" onerror="this.style.display='none'"><div class="lbl"><b>mask-lifestyle.jpg</b><span>mask on linen at dusk</span></div></div>
+    <div class="prod-copy">
+      <div class="eyebrow">The Lull ritual</div>
+      <h3 style="font-size:clamp(28px,4.6vw,42px);">Not products.<br>A wind-down.</h3>
+      <p class="desc" style="margin-top:8px;">Sleep isn't a switch — it's a descent. Lull gives you three moves that walk you down, in order, every night.</p>
+      <ul>
+        <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><b style="font-weight:600;">Close the light</b> — slip on the contoured mask.</li>
+        <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><b style="font-weight:600;">Open the breath</b> — a strip lifts your airway.</li>
+        <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg><b style="font-weight:600;">Seal the calm</b> — gentle tape guides nasal breathing.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT: KIT -->
+<div class="prod">
+  <div class="imgslot prod-media"><img src="bundle-open.png" alt="The Lull Sleep Kit" onerror="this.style.display='none'"><div class="lbl"><b>bundle-open.jpg</b><span>open kit — contents visible</span></div></div>
+  <div class="prod-copy">
+    <div class="eyebrow">The full ritual</div>
+    <h3>The Lull Sleep Kit</h3>
+    <div class="tag">Everything you need to fall asleep. In one box.</div>
+    <ul>
+      <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Three-piece wind-down: mask, strips, gentle tape</li>
+      <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Blocks light, opens breathing, quiets the night</li>
+      <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Feel the difference from the very first night</li>
+      <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Boxed as a gift, arrives as a ritual</li>
+    </ul>
+    <p class="desc">Sleep isn't a switch — it's a descent. The Lull Kit gives you three simple moves that walk you down every night: close the light, open the breath, seal the calm. No pills, no screens, no noise.</p>
+    <div class="buy"><div class="price">349 EGP <s>499</s></div><a href="#" class="btn">Add to bag</a></div>
+  </div>
+</div>
+
+<!-- PRODUCT: MASK -->
+<div class="prod flip">
+  <div class="imgslot prod-media"><img src="mask-clean.png" alt="The Lull Contour Mask" onerror="this.style.display='none'"><div class="lbl"><b>mask-clean.jpg</b><span>clean mask shot</span></div></div>
+  <div class="prod-copy">
+    <div class="eyebrow">The mask</div>
+    <h3>The Contour Mask</h3>
+    <div class="tag">Total darkness. Zero pressure.</div>
+    <ul>
+      <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>3D contoured cups — no pressure on your eyes, blink freely</li>
+      <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Blocks 100% of light for deeper, uninterrupted sleep</li>
+      <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Lightweight, breathable, adjustable to any head size</li>
+      <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Ideal for sleep, travel, naps, and night shifts</li>
+    </ul>
+    <p class="desc">Most masks press on your eyes and let light leak in. The Contour Mask does neither. Molded eye cups give your eyes room to rest while blocking every trace of light — so your body believes it's truly night, and lets go.</p>
+    <div class="buy"><div class="price">199 EGP <s>299</s></div><a href="#" class="btn">Add to bag</a></div>
+  </div>
+</div>
+
+<!-- PRODUCT: STRIPS -->
+<div class="prod">
+  <div class="imgslot prod-media"><img src="strips-box.jpg" alt="Lull Breathe Strips" onerror="this.style.display='none'"><div class="lbl"><b>strips-box.jpg</b><span>breathe strips box</span></div></div>
+  <div class="prod-copy">
+    <div class="eyebrow">Nose strips</div>
+    <h3>Breathe Strips</h3>
+    <div class="tag">Open your nose. Quiet your night.</div>
+    <ul>
+      <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Gently lifts the nasal passage to open your airway</li>
+      <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Increases airflow for easier, quieter breathing</li>
+      <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Drug-free and gentle on skin</li>
+      <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Helps reduce snoring — 30 clear strips per box</li>
+    </ul>
+    <p class="desc">When your nose is blocked, sleep suffers and snoring starts. Breathe Strips gently open your nasal passage so air moves freely — quieter nights, deeper breath, and a difference you'll feel the moment your head hits the pillow.</p>
+    <div class="buy"><div class="price">199 EGP <s>299</s></div><a href="#" class="btn">Add to bag</a></div>
+  </div>
+</div>
+
+<!-- PRODUCT: TAPE -->
+<div class="prod flip">
+  <div class="imgslot prod-media"><img src="tape-box.jpg" alt="Lull Night Tape" onerror="this.style.display='none'"><div class="lbl"><b>tape-box.jpg</b><span>night tape box</span></div></div>
+  <div class="prod-copy">
+    <div class="eyebrow">Gentle tape</div>
+    <h3>Night Tape</h3>
+    <div class="tag">Breathe through your nose.</div>
+    <ul>
+      <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Gently encourages nasal breathing through the night</li>
+      <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Softer, slower, quieter sleep</li>
+      <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Skin-friendly, vented, and easy to remove</li>
+      <li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Best paired with Breathe Strips for the full effect</li>
+    </ul>
+    <p class="desc">Mouth breathing dries you out and makes sleep loud and restless. Night Tape gently guides you to breathe through your nose instead — the calmer, quieter way your body prefers.</p>
+    <div class="safety">Our tape is soft and vented — designed to encourage, not seal. Not suitable for anyone with significant nasal congestion, breathing conditions, or sleep apnea.</div>
+    <div class="buy" style="margin-top:18px;"><div class="price">159 EGP <s>249</s></div><a href="#" class="btn">Add to bag</a></div>
+  </div>
+</div>
+
+<!-- TIERS -->
+<section class="pad" id="tiers" style="background:var(--bone2);">
+  <div class="wrap center">
+    <div class="eyebrow sec-eyebrow">Choose your night</div>
+    <h2 class="big">Start where you like.</h2>
+    <p class="lead">Try one piece, or take the whole ritual. Most people start with the Kit.</p>
+    <div class="tiers">
+      <div class="tier">
+        <h3>The Single</h3><div class="desc">One product to try us out.</div><div class="price">199 <small>EGP</small></div>
+        <ul><li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Your pick: mask, strips, or tape</li><li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Cash on delivery</li><li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> The easiest way to meet Lull</li></ul>
+        <a href="#" class="btn">Add to bag</a>
+      </div>
+      <div class="tier feature">
+        <div class="badge">Most loved</div><h3>The Kit</h3><div class="desc">All three. The full ritual.</div><div class="price">349 <small>EGP</small></div><div class="was" style="color:var(--moon);">was 499 EGP</div>
+        <ul><li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Mask + strips + gentle tape</li><li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Free shipping over 700 EGP</li><li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Boxed as a gift</li></ul>
+        <a href="#" class="btn">Add to bag</a>
+      </div>
+      <div class="tier">
+        <h3>The Ritual</h3><div class="desc">The Kit + a month of refills.</div><div class="price">549 <small>EGP</small></div>
+        <ul><li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Everything in the Kit</li><li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> 30-night refill of strips & tape</li><li><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg> Best value per night</li></ul>
+        <a href="#" class="btn">Add to bag</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REFILL -->
+<section class="pad" id="refill">
+  <div class="refill">
+    <div>
+      <div class="eyebrow" style="color:var(--dusk-lilac);">Never run out</div>
+      <h2>The strips run out.<br>Your <em>sleep shouldn't.</em></h2>
+      <p>Nose strips and tape are nightly. Subscribe once and a fresh refill arrives every month — pay on delivery, skip or cancel any time over WhatsApp.</p>
+    </div>
+    <div class="rbox">
+      <div class="rp">129 <small>EGP / month</small></div>
+      <div class="save">Save 20% vs one-off</div>
+      <a href="#" class="btn">Start monthly refills</a>
+      <p style="font-size:12.5px;color:#8E8BB2;margin-top:14px;">Cancel anytime. No app, just a message.</p>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="pad" style="background:var(--bone2);">
+  <div class="wrap center">
+    <div class="eyebrow sec-eyebrow">From people who couldn't switch off</div>
+    <h2 class="big">Quieter nights, <em>real ones.</em></h2>
+    <div class="reviews">
+      <div class="rev"><div class="stars-row">★★★★★</div><p>"First brand that made this feel intentional instead of something off a random marketplace. The box alone made me trust it."</p><div class="who">— Verified · Cairo</div></div>
+      <div class="rev"><div class="stars-row">★★★★★</div><p>"The nose strips genuinely changed how I breathe at night. Bought the refill the same week."</p><div class="who">— Verified · Alexandria</div></div>
+      <div class="rev"><div class="stars-row">★★★★★</div><p>"Paid cash at the door, arrived next day, looked more premium than the price. Gifting the Kit to my sister."</p><div class="who">— Verified · Giza</div></div>
+    </div>
+    <p style="font-size:12.5px;color:var(--text-soft);margin-top:26px;">Replace with real customer reviews after your first orders — social proof is your #1 COD trust lever.</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="pad">
+  <div class="wrap center"><div class="eyebrow sec-eyebrow">Before you drift off</div><h2 class="big">Questions, answered.</h2></div>
+  <div class="faq">
+    <details open><summary>Can I pay cash on delivery?</summary><p>Yes. Pay at your door when your Lull arrives — no card needed. We currently deliver across Cairo, Giza, and Alexandria, with more cities coming.</p></details>
+    <details><summary>How fast is delivery?</summary><p>Usually 1–3 days in Greater Cairo and Alexandria. We confirm your order over WhatsApp before it ships, so nothing arrives as a surprise.</p></details>
+    <details><summary>Is the mouth tape safe?</summary><p>Our tape is a soft, vented strip designed to gently encourage nasal breathing — not seal your mouth shut. It isn't suitable for anyone with significant nasal congestion, breathing conditions, or sleep apnea. If that's you, use the mask and strips and skip the tape, or check with your doctor first.</p></details>
+    <details><summary>What if I don't like it?</summary><p>Free returns within Cairo. If the Kit isn't for you, message us on WhatsApp and we'll sort it.</p></details>
+    <details><summary>How do refills work?</summary><p>Strips and tape are nightly, so they run out. Subscribe once and a fresh pack arrives monthly, paid on delivery. Skip or cancel any month with a single WhatsApp message.</p></details>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-top">
+    <div class="foot-brand">Lull<span class="dot">.</span><p>Egypt's first sleep kit. Three small things, one better night.</p></div>
+    <div class="foot-col"><h5>Shop</h5><a href="#tiers">The Kit</a><a href="#shop">The Mask</a><a href="#shop">Breathe Strips</a><a href="#shop">Night Tape</a></div>
+    <div class="foot-col"><h5>Help</h5><a href="#">WhatsApp us</a><a href="#">Shipping & COD</a><a href="#">Returns</a></div>
+    <div class="foot-col"><h5>Lull</h5><a href="#ritual">The Ritual</a><a href="#refill">Refills</a><a href="#">Instagram</a></div>
+  </div>
+  <div class="foot-bottom"><span>© 2026 Lull. Sleep, sorted.</span><span>Cairo · Giza · Alexandria</span></div>
+</footer>
+
+<div class="disclaimer">Lull products support restful sleep and are not medical devices. They do not treat or cure sleep apnea or any medical condition. Consult a doctor for persistent snoring or breathing issues during sleep.</div>
+
+</body>
+</html>
